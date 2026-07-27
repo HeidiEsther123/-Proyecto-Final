@@ -5,13 +5,14 @@ import mx.tecdesoftware.streaming_backend.persistence.entity.Serie;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = CategoryMapper.class)
 public interface SeriesMapper {
 
     @Mapping(source = "idSerie", target = "id")
     @Mapping(source = "titulo", target = "title")
     @Mapping(source = "genero", target = "genre")
     @Mapping(source = "anioLanzamiento", target = "releaseYear")
+    @Mapping(source = "categoria", target = "category")
     @Mapping(target = "seasons", ignore = true)
     Series toDomain(Serie entity);
 
@@ -19,6 +20,7 @@ public interface SeriesMapper {
     @Mapping(source = "title", target = "titulo")
     @Mapping(source = "genre", target = "genero")
     @Mapping(source = "releaseYear", target = "anioLanzamiento")
+    @Mapping(source = "category", target = "categoria")
     @Mapping(target = "temporadas", ignore = true)
     Serie toEntity(Series domain);
 }

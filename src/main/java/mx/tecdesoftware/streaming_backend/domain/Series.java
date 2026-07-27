@@ -8,6 +8,7 @@ public class Series {
     private String title;
     private String genre;
     private Integer releaseYear;
+    private Category category;
     private List<Season> seasons;
 
     public Series() {}
@@ -23,6 +24,9 @@ public class Series {
 
     public Integer getReleaseYear() { return releaseYear; }
     public void setReleaseYear(Integer releaseYear) { this.releaseYear = releaseYear; }
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 
     public List<Season> getSeasons() { return seasons; }
     public void setSeasons(List<Season> seasons) { this.seasons = seasons; }
