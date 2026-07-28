@@ -6,6 +6,7 @@ public class Episode {
     private String title;
     private Integer episodeNumber;
     private Integer durationMinutes;
+    private Season season; // <-- 1. Agregar el atributo
 
     public Episode() {}
 
@@ -20,4 +21,13 @@ public class Episode {
 
     public Integer getDurationMinutes() { return durationMinutes; }
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
+
+    // <-- 2. Agregar Getter y Setter obligatorios para MapStruct
+    public Season getSeason() {
+        return season;
+    }
+
+    public void setSeason(Season season) {
+        this.season = season;
+    }
 }

@@ -8,6 +8,7 @@ public class Season {
     private Integer seasonNumber;
     private Integer year;
     private List<Episode> episodes;
+    private Series series; // <-- Agregar la referencia a la serie
 
     public Season() {}
 
@@ -22,4 +23,7 @@ public class Season {
 
     public List<Episode> getEpisodes() { return episodes; }
     public void setEpisodes(List<Episode> episodes) { this.episodes = episodes; }
+
+    public Series getSeries() { return series; }
+    public void setSeries(Series series) { this.series = series; } 
 }
