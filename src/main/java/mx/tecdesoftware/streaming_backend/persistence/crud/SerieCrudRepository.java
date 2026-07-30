@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SerieCrudRepository extends CrudRepository<Serie, Integer> {
+    boolean existsByTituloIgnoreCase(String titulo);
 }

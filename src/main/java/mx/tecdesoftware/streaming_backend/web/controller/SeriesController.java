@@ -66,9 +66,11 @@ public class SeriesController {
     @ApiResponse(responseCode = "201", description = "Series created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid series data")
     @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "409", description = "A series with this title already exists")
     public ResponseEntity<Series> create(@RequestBody Series series) {
-        Series saved = seriesService.save(series);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return seriesService.save(series)
+                .map(saved -> ResponseEntity.status(HttpStatus.CREATED).body(saved))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
     @DeleteMapping("/{id}")

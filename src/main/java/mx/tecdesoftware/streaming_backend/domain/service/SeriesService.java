@@ -6,6 +6,7 @@ import mx.tecdesoftware.streaming_backend.persistence.entity.Serie;
 import mx.tecdesoftware.streaming_backend.persistence.mapper.SeriesMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class SeriesService {
     }
 
     public List<Series> findAll() {
-        List<Series> result = new java.util.ArrayList<>();
+        List<Series> result = new ArrayList<>();
         serieCrudRepository.findAll().forEach(entity -> result.add(seriesMapper.toDomain(entity)));
         return result;
     }
@@ -31,10 +32,18 @@ public class SeriesService {
                 .map(seriesMapper::toDomain);
     }
 
-    public Series save(Series series) {
+    public boolean existsByTitle(String title) {
+        return serieCrudRepository.findAll().stream()
+                .anyMatch(s -> s.getTitulo().equalsIgnoreCase(title));
+    }
+
+    public Optional<Series> save(Series series) {
+        if (existsByTitle(series.getTitle())) {
+            return Optional.empty();
+        }
         Serie entity = seriesMapper.toEntity(series);
         Serie saved = serieCrudRepository.save(entity);
-        return seriesMapper.toDomain(saved);
+        return Optional.of(seriesMapper.toDomain(saved));
     }
 
     public boolean deleteById(Integer id) {
