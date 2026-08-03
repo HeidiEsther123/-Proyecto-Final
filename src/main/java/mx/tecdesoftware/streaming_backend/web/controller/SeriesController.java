@@ -54,9 +54,20 @@ public class SeriesController {
                                     name = "Example Series",
                                     value = """
                                             {
-                                              "title": "Lucifer",
-                                              "genre": "Misterio",
-                                              "releaseYear": 2015
+                                              "title": "The Office",
+                                              "genre": "Comedia",
+                                              "releaseYear": 2005,
+                                              "category": { "id": 1 },
+                                              "seasons": [
+                                                {
+                                                  "seasonNumber": 1,
+                                                  "year": 2005,
+                                                  "episodes": [
+                                                    { "title": "Pilot", "episodeNumber": 1, "durationMinutes": 23 },
+                                                    { "title": "Diversity Day", "episodeNumber": 2, "durationMinutes": 22 }
+                                                  ]
+                                                }
+                                              ]
                                             }
                                             """
                             )

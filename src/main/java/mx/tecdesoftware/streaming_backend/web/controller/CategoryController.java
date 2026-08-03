@@ -53,21 +53,23 @@ public class CategoryController {
                             examples = @ExampleObject(
                                     name = "Example Category",
                                     value = """
-                                            {
-                                              "name": "Terror",
-                                              "description": "Series con suspenso que te deja aferrado a la silla "
-                                            }
-                                            """
+                                        {
+                                          "name": "Drama",
+                                          "description": "Series with dramatic and emotional plots"
+                                        }
+                                        """
                             )
                     )
             )
     )
     @ApiResponse(responseCode = "201", description = "Category created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid category data")
+    @ApiResponse(responseCode = "409", description = "A category with this name already exists")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     public ResponseEntity<Category> create(@RequestBody Category category) {
-        Category saved = categoryService.save(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return categoryService.save(category)
+                .map(saved -> ResponseEntity.status(HttpStatus.CREATED).body(saved))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
     @DeleteMapping("/{id}")

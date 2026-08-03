@@ -32,10 +32,18 @@ public class SeasonService {
                 .map(seasonMapper::toDomain);
     }
 
-    public Season save(Season season) {
+    public boolean existsBySeriesAndNumber(Integer seriesId, Integer seasonNumber) {
+        return temporadaCrudRepository.existsBySerie_IdSerieAndNumeroTemporada(seriesId, seasonNumber);
+    }
+
+    public Optional<Season> save(Season season) {
+        if (season.getSeries() != null && season.getSeries().getId() != null
+                && existsBySeriesAndNumber(season.getSeries().getId(), season.getSeasonNumber())) {
+            return Optional.empty();
+        }
         Temporada entity = seasonMapper.toEntity(season);
         Temporada saved = temporadaCrudRepository.save(entity);
-        return seasonMapper.toDomain(saved);
+        return Optional.of(seasonMapper.toDomain(saved));
     }
 
     public boolean deleteById(Integer id) {

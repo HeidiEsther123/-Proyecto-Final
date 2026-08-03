@@ -1,8 +1,12 @@
 package mx.tecdesoftware.streaming_backend.domain.service;
 
 import mx.tecdesoftware.streaming_backend.domain.Series;
+import mx.tecdesoftware.streaming_backend.persistence.crud.CategoriaCrudRepository;
 import mx.tecdesoftware.streaming_backend.persistence.crud.SerieCrudRepository;
+import mx.tecdesoftware.streaming_backend.persistence.entity.Categoria;
+import mx.tecdesoftware.streaming_backend.persistence.entity.Episodio;
 import mx.tecdesoftware.streaming_backend.persistence.entity.Serie;
+import mx.tecdesoftware.streaming_backend.persistence.entity.Temporada;
 import mx.tecdesoftware.streaming_backend.persistence.mapper.SeriesMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +18,14 @@ import java.util.Optional;
 public class SeriesService {
 
     private final SerieCrudRepository serieCrudRepository;
+    private final CategoriaCrudRepository categoriaCrudRepository;
     private final SeriesMapper seriesMapper;
 
-    public SeriesService(SerieCrudRepository serieCrudRepository, SeriesMapper seriesMapper) {
+    public SeriesService(SerieCrudRepository serieCrudRepository,
+                         CategoriaCrudRepository categoriaCrudRepository,
+                         SeriesMapper seriesMapper) {
         this.serieCrudRepository = serieCrudRepository;
+        this.categoriaCrudRepository = categoriaCrudRepository;
         this.seriesMapper = seriesMapper;
     }
 
@@ -33,17 +41,39 @@ public class SeriesService {
     }
 
     public boolean existsByTitle(String title) {
-        return serieCrudRepository.findAll().stream()
-                .anyMatch(s -> s.getTitulo().equalsIgnoreCase(title));
+        return serieCrudRepository.existsByTituloIgnoreCase(title);
     }
 
     public Optional<Series> save(Series series) {
         if (existsByTitle(series.getTitle())) {
             return Optional.empty();
         }
+
         Serie entity = seriesMapper.toEntity(series);
+
+        // La Categoria no se crea en cascada: debe existir ya y se vincula por ID
+        if (series.getCategory() != null && series.getCategory().getId() != null) {
+            Categoria categoria = categoriaCrudRepository.findById(series.getCategory().getId())
+                    .orElse(null);
+            entity.setCategoria(categoria);
+        }
+
+        linkChildren(entity);
         Serie saved = serieCrudRepository.save(entity);
         return Optional.of(seriesMapper.toDomain(saved));
+    }
+
+    private void linkChildren(Serie serie) {
+        if (serie.getTemporadas() != null) {
+            for (Temporada temporada : serie.getTemporadas()) {
+                temporada.setSerie(serie);
+                if (temporada.getEpisodios() != null) {
+                    for (Episodio episodio : temporada.getEpisodios()) {
+                        episodio.setTemporada(temporada);
+                    }
+                }
+            }
+        }
     }
 
     public boolean deleteById(Integer id) {

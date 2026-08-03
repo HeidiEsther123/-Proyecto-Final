@@ -53,25 +53,24 @@ public class EpisodeController {
                             examples = @ExampleObject(
                                     name = "Example Episode",
                                     value = """
-                                            {
-                                              "title": "Piloto",
-                                              "episodeNumber": 1,
-                                              "durationMinutes": 45,
-                                              "season": {
-                                                "id": 1
-                                              }
-                                            }
-                                            """
+                                        {
+                                          "title": "Pilot",
+                                          "episodeNumber": 1,
+                                          "durationMinutes": 45,
+                                          "season": { "id": 1 }
+                                        }
+                                        """
                             )
                     )
             )
     )
     @ApiResponse(responseCode = "201", description = "Episode created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid episode data")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "409", description = "This episode number already exists for the given season")
     public ResponseEntity<Episode> create(@RequestBody Episode episode) {
-        Episode saved = episodeService.save(episode);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return episodeService.save(episode)
+                .map(saved -> ResponseEntity.status(HttpStatus.CREATED).body(saved))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
     @DeleteMapping("/{id}")

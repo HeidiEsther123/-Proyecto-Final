@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TemporadaCrudRepository extends CrudRepository<Temporada, Integer> {
+    boolean existsBySerie_IdSerieAndNumeroTemporada(Integer idSerie, Integer numeroTemporada);
 }

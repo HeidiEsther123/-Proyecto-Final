@@ -32,10 +32,18 @@ public class EpisodeService {
                 .map(episodeMapper::toDomain);
     }
 
-    public Episode save(Episode episode) {
+    public boolean existsBySeasonAndNumber(Integer seasonId, Integer episodeNumber) {
+        return episodioCrudRepository.existsByTemporada_IdTemporadaAndNumeroEpisodio(seasonId, episodeNumber);
+    }
+
+    public Optional<Episode> save(Episode episode) {
+        if (episode.getSeason() != null && episode.getSeason().getId() != null
+                && existsBySeasonAndNumber(episode.getSeason().getId(), episode.getEpisodeNumber())) {
+            return Optional.empty();
+        }
         Episodio entity = episodeMapper.toEntity(episode);
         Episodio saved = episodioCrudRepository.save(entity);
-        return episodeMapper.toDomain(saved);
+        return Optional.of(episodeMapper.toDomain(saved));
     }
 
     public boolean deleteById(Integer id) {

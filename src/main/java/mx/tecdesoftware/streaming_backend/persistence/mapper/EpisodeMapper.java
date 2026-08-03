@@ -2,7 +2,6 @@ package mx.tecdesoftware.streaming_backend.persistence.mapper;
 
 import mx.tecdesoftware.streaming_backend.domain.Episode;
 import mx.tecdesoftware.streaming_backend.persistence.entity.Episodio;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,7 +15,10 @@ public interface EpisodeMapper {
     @Mapping(source = "temporada", target = "season")
     Episode toDomain(Episodio entity);
 
-    @InheritInverseConfiguration
+    @Mapping(source = "id", target = "idEpisodio")
+    @Mapping(source = "title", target = "titulo")
+    @Mapping(source = "episodeNumber", target = "numeroEpisodio")
+    @Mapping(source = "durationMinutes", target = "duracionMinutos")
+    @Mapping(target = "temporada", ignore = true)
     Episodio toEntity(Episode domain);
 }
-

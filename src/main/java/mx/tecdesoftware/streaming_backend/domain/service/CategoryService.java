@@ -32,8 +32,12 @@ public class CategoryService {
                 .map(categoryMapper::toDomain);
     }
 
+    public boolean existsByName(String name) {
+        return categoriaCrudRepository.existsByNombreIgnoreCase(name);
+    }
+
     public Optional<Category> save(Category category) {
-        if (categoriaCrudRepository.existsByNombreIgnoreCase(category.getName())) {
+        if (existsByName(category.getName())) {
             return Optional.empty();
         }
         Categoria entity = categoryMapper.toEntity(category);
@@ -48,5 +52,4 @@ public class CategoryService {
         categoriaCrudRepository.deleteById(id);
         return true;
     }
-
 }

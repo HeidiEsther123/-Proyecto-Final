@@ -53,24 +53,23 @@ public class SeasonController {
                             examples = @ExampleObject(
                                     name = "Example Season",
                                     value = """
-                                            {
-                                              "seasonNumber": 1,
-                                              "year": 2008,
-                                              "series": {
-                                                "id": 1
-                                              }
-                                            }
-                                            """
+                                        {
+                                          "seasonNumber": 1,
+                                          "year": 2015,
+                                          "series": { "id": 1 }
+                                        }
+                                        """
                             )
                     )
             )
     )
     @ApiResponse(responseCode = "201", description = "Season created successfully")
     @ApiResponse(responseCode = "400", description = "Invalid season data")
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @ApiResponse(responseCode = "409", description = "This season number already exists for the given series")
     public ResponseEntity<Season> create(@RequestBody Season season) {
-        Season saved = seasonService.save(season);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return seasonService.save(season)
+                .map(saved -> ResponseEntity.status(HttpStatus.CREATED).body(saved))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
     @DeleteMapping("/{id}")
